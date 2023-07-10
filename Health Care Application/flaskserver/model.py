@@ -84,12 +84,18 @@ class Appointment:
     def __init__(self,db):
         self.appointment = db.appointment
 
-    def set_appointment(self, yourname,docname,purpose,timeSlot):
+    def set_appointment(self, yourname,docname,yourmail,yourcellnum,gender,docmail,docspecialization,docaddress,doctiming,subject):
         appoint={
-            "username":yourname,
+            "yourname":yourname,
             "docname":docname,
-            "purpose":purpose,
-            "timeSlot": timeSlot           
+            "yourmail":yourmail,
+            "yourcellnum": yourcellnum,
+            "gender": gender,
+            "docmail":docmail,
+            "docspecialization":docspecialization,
+            "docaddress":docaddress,
+            "doctiming":doctiming,
+            "subject":subject   
         }
         self.appointment.insert_one(appoint)
         return appoint

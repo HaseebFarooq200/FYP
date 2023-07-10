@@ -102,39 +102,6 @@ export default function Login() {
                   <Card.Body>
                     <Card.Title>Login</Card.Title>
                     <form>
-                    {/* <div className="flex flex-column md:flex-row gap-3">
-                        <div className="p-inputgroup flex-1">
-                          <InputText value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Full Name" />
-                        </div>
-
-                        <div className="p-inputgroup flex-1">
-                          <InputText type='email' value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
-                        </div>
-
-                        <div className="p-inputgroup flex-1">
-                          <InputMask value={cellnum} onChange={(e) => setCellnum(e.target.value)} mask="9999-9999999" placeholder="Cell Number" />
-                        </div>
-
-                        <div className="p-inputgroup flex-1">
-                          <InputText placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)} />
-                        </div>
-                        
-
-                        <div className="p-inputgroup flex-1">
-                          <Calendar placeholder='Date of Birth' value={date} onChange={(e) => setDate(e.value)} />
-                        </div>
-
-                        <div className="p-inputgroup flex-1">
-                          <div className="flex align-items-center">
-                            <RadioButton inputId="gender1" name="Male" value="Male" onChange={(e) => setGender(e.target.value)} checked={gender === 'Male'} />
-                            <label htmlFor="Male" className="ml-2">Male</label>
-                          </div>
-                          <div className=" ms-5 flex align-items-center">
-                            <RadioButton inputId="gender2" name="gender" value="Female" onChange={(e) => setGender(e.target.value)} checked={gender === 'Female'} />
-                            <label htmlFor="gender2" className="ml-2">Female</label>
-                          </div>
-                        </div>
-                      </div> */}
                       <MDBInput className='mb-4'
                         name='email'
                         value={formValue.email}

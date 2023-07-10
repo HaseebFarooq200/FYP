@@ -13,6 +13,7 @@ from model import Appointment
 from model import HealthBlogs
 from bson import ObjectId
 
+
 client = MongoClient("mongodb+srv://haseeb:health123@cluster0.kzcener.mongodb.net/?retryWrites=true&w=majority")
 
 try:
@@ -47,7 +48,6 @@ app.config['MAIL_PASSWORD'] = 'thgevdwvprumjktv'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
-
 
 # Generate Random OTP
 otp = random.randint(1000, 9999)
@@ -174,16 +174,24 @@ def resendOTP():
 def Book_Appointment():
     user_data = request.get_json()
     user_dict = {
-        'yourName': user_data['yourName'],
-        'doctorName': user_data['doctorName'],
-        'purpose': user_data['purpose'],
-        'timeSlot': user_data['timeSlot']
+        'yourName': user_data['fullName'],
+        'yourmail': user_data['email'],
+        'yourcellnum': user_data['cellnum'],
+        'gender': user_data['gender'],
+        'doctorName': user_data['docname'],
+        'doctormail':user_data['docmail'],
+        'doctorspecialization': user_data['docspecialization'],
+        'doctoraddress':user_data['docaddress'],
+        'doctortiming':user_data['doctiming'],
+        'subject':user_data['Subject'],
     }
-    if (not user_dict['yourName'] or not user_dict['doctorName'] or not user_dict['purpose'] or not user_dict['timeSlot']):
+    if (not user_dict['yourName'] or not user_dict['doctorName'] or not user_dict['yourmail'] or not user_dict['yourcellnum'] or not user_dict['gender'] 
+        or not user_dict['doctormail'] or not user_dict['doctorspecialization'] or not user_dict['doctoraddress'] or not user_dict['doctortiming'] or not user_dict['subject'] ):
         return jsonify("Fill the credentials"), 400
     else:
         appointment.set_appointment(
-            user_dict['yourName'], user_dict['doctorName'], user_dict['purpose'], user_dict['timeSlot'])
+            user_dict['yourName'], user_dict['doctorName'], user_dict['yourmail'], user_dict['yourcellnum'], user_dict['gender'], user_dict['doctormail'], user_dict['doctorspecialization'],
+            user_dict['doctoraddress'], user_dict['doctortiming'], user_dict['subject']  )
         print("Appontment Booked")
         return jsonify("Appointment Successfully Booked"), 200
 
@@ -284,8 +292,6 @@ def GetDoctorRandom():
     getdoc = userSchema.get_doctorrandom()
     resp = dumps(getdoc)
     return (resp), 200 
-
-
 
 @app.route('/getsymptom', methods=['GET'])
 def Getsymptom():
