@@ -10,10 +10,6 @@ import {
   MDBNavbarItem,
   MDBNavbarLink,
   MDBBtn,
-  // MDBDropdown,
-  // MDBDropdownToggle,
-  // MDBDropdownMenu,
-  // MDBDropdownItem,
   MDBCollapse
 } from 'mdb-react-ui-kit';
 export default function Navbar() {
@@ -66,6 +62,20 @@ export default function Navbar() {
                 <Link to='/healthblog' >
                   <MDBNavbarLink active aria-current='page' >
                     Health Blogs
+                  </MDBNavbarLink>
+                </Link>
+              </MDBNavbarItem>
+              <MDBNavbarItem>
+                <Link to='/myprofile' >
+                  <MDBNavbarLink active aria-current='page' >
+                    My Profile
+                  </MDBNavbarLink>
+                </Link>
+              </MDBNavbarItem>
+              <MDBNavbarItem>
+                <Link to='/myappointment' >
+                  <MDBNavbarLink active aria-current='page' >
+                    My Appointments
                   </MDBNavbarLink>
                 </Link>
               </MDBNavbarItem>

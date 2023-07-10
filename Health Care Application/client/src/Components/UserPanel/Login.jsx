@@ -23,6 +23,13 @@ export default function Login() {
   const [basicModal, setBasicModal] = useState(false);
   const toggleShow = () => setBasicModal(!basicModal);
 
+  // const [fullName, setFullName] = useState('');
+  // const [email, setEmail] = useState('');
+  // const [cellnum, setCellnum] = useState();
+  // const [date, setDate] = useState(null);
+  // const [address, setAddress] = useState('');
+  // const [gender, setGender] = useState('');
+
   const [formValue, setFormValue] = useState({
     email: '',
     myotp:''
@@ -38,7 +45,7 @@ export default function Login() {
     const response = await fetch('/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email})
+      body: JSON.stringify({email})
     })
 
     const UserData = await response.json()
@@ -66,8 +73,8 @@ export default function Login() {
       body: JSON.stringify({ myotp})
     })
     
-    const UserData = await response.json()
-    if (response.status === 200 || !UserData) {
+    await response.json()
+    if (response.status === 200 ) {
       // window.alert('Signed in successfully')
       navigate('/home')
       setFormValue({
@@ -95,6 +102,39 @@ export default function Login() {
                   <Card.Body>
                     <Card.Title>Login</Card.Title>
                     <form>
+                    {/* <div className="flex flex-column md:flex-row gap-3">
+                        <div className="p-inputgroup flex-1">
+                          <InputText value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Full Name" />
+                        </div>
+
+                        <div className="p-inputgroup flex-1">
+                          <InputText type='email' value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
+                        </div>
+
+                        <div className="p-inputgroup flex-1">
+                          <InputMask value={cellnum} onChange={(e) => setCellnum(e.target.value)} mask="9999-9999999" placeholder="Cell Number" />
+                        </div>
+
+                        <div className="p-inputgroup flex-1">
+                          <InputText placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)} />
+                        </div>
+                        
+
+                        <div className="p-inputgroup flex-1">
+                          <Calendar placeholder='Date of Birth' value={date} onChange={(e) => setDate(e.value)} />
+                        </div>
+
+                        <div className="p-inputgroup flex-1">
+                          <div className="flex align-items-center">
+                            <RadioButton inputId="gender1" name="Male" value="Male" onChange={(e) => setGender(e.target.value)} checked={gender === 'Male'} />
+                            <label htmlFor="Male" className="ml-2">Male</label>
+                          </div>
+                          <div className=" ms-5 flex align-items-center">
+                            <RadioButton inputId="gender2" name="gender" value="Female" onChange={(e) => setGender(e.target.value)} checked={gender === 'Female'} />
+                            <label htmlFor="gender2" className="ml-2">Female</label>
+                          </div>
+                        </div>
+                      </div> */}
                       <MDBInput className='mb-4'
                         name='email'
                         value={formValue.email}

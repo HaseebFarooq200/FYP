@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ListBox } from 'primereact/listbox';
+import { InputText } from 'primereact/inputtext';
+import { InputMask } from 'primereact/inputmask';
+import { RadioButton } from 'primereact/radiobutton';
 import {
-    MDBInput,
     MDBContainer,
     MDBRow,
     MDBCol,
@@ -64,9 +66,14 @@ export default function DoctorProfile() {
         },
     ];
 
+    const [fullName, setFullName] = useState('');
+    const [email, setEmail] = useState('');
+    const [cellnum, setCellnum] = useState();
+    const [gender, setGender] = useState('');
+
     const location = useLocation()
 
-    let email = location.state.email
+    let myemail = location.state.email
 
     const [doc, setDoc] = useState([])
 
@@ -98,16 +105,34 @@ export default function DoctorProfile() {
         //  eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const myfunc = () => {
-        window.alert('Fill all input fields')
+    const JoinPatient = async (e) => {
+        try {
+            e.preventDefault();
+            const response = await fetch('/patientjoin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fullName, email, cellnum, gender })
+            })
+            const UserData = await response.json()
+            if (response.status === 200 || !UserData) {
+                window.alert('Your Appointment is booked')
+                // navigate('/')
+            }
+            else {
+                console.log("Invalid Entry")
+                window.alert('Invalid Entry !')
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     return (
         <>
             {
-
                 doc.map((index) => {
-                    if (email === index.email) {
+                    if (myemail === index.email) {
                         return (
                             <MDBContainer breakpoint="sm" className="mt-5" style={{ marginBottom: '250px' }} >
                                 <MDBRow>
@@ -115,39 +140,36 @@ export default function DoctorProfile() {
                                         <img className="rounded-circle w-100 border border-2 " alt="avatar2" src="https://mdbcdn.b-cdn.net/img/new/avatars/1.webp" />
                                     </MDBCol>
                                     <MDBCol size="md-4" className="d-flex flex-column justify-content-around  " >
-                                        <h5>Dr. {index.firstname} {index.lastname}</h5>
+                                        <h5>Dr. {index.fullName}</h5>
                                         <span>{index.email}</span>
                                         <span>{index.gender}</span>
                                         <span>{index.specialization}</span>
-                                        <span>850+ years Experience</span>
                                     </MDBCol>
                                     <MDBCol size="md-5" className='d-flex flex-column justify-content-around border border-3 bg-light' >
                                         <h4>{index.hospital}</h4>
-                                        <span>Fees: 50,000 Rs</span>
+                                        <span>{index.consultFee}</span>
                                         <span>Address: {index.address}</span>
-                                        <span>Availabiliy: 09:00 am - 05:00 pm</span>
+                                        <span>Availabiliy: {index.timing}</span>
                                         <MDBBtn className='w-50' onClick={toggleShow}>Book an Appointment</MDBBtn>
                                     </MDBCol>
-                                    {/* <div className="card flex justify-content-center"> */}
-                                    {/* </div> */}
                                 </MDBRow>
                                 <MDBRow className='mt-5'>
                                     <h4 className='mb-3' >Appointment Schedule</h4>
                                     <MDBCol size="md-2" className="d-flex justify-content-between">
                                         <span>Active</span>
-                                        <span>10</span>
+                                        <span>{index.active_appointments}</span>
                                     </MDBCol>
                                     <MDBCol size="md-2" className="d-flex justify-content-between">
                                         <span>Pending</span>
-                                        <span>3</span>
+                                        <span>{index.pending_appointments}</span>
                                     </MDBCol>
                                     <MDBCol size="md-2" className="d-flex justify-content-between">
                                         <span>Cancelled</span>
-                                        <span>1</span>
+                                        <span>{index.cancelled_appointments}</span>
                                     </MDBCol>
                                     <MDBCol size="md-2" className="d-flex justify-content-between">
                                         <span>Completed</span>
-                                        <span>200</span>
+                                        <span>{index.completed_appointments}</span>
                                     </MDBCol>
                                 </MDBRow>
                                 <MDBRow className='mt-5' >
@@ -169,9 +191,32 @@ export default function DoctorProfile() {
                             <MDBBtn className='btn-close' color='none' onClick={toggleShow}></MDBBtn>
                         </MDBModalHeader>
                         <MDBModalBody>
-                            <MDBInput label='Name' id='form1' type='text' name='name' />
-                            <MDBInput className='mt-2' label='Phone Number' id='form1' type='number' name='number' />
-                            <h5 className='mt-2 ms-1' >Timings</h5>
+                            <form>
+                                <div className="flex flex-column md:flex-row gap-3">
+                                    <div className="p-inputgroup flex-1">
+                                        <InputText value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Full Name" />
+                                    </div>
+
+                                    <div className="p-inputgroup flex-1">
+                                        <InputText type='email' value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
+                                    </div>
+
+                                    <div className="p-inputgroup flex-1">
+                                        <InputMask value={cellnum} onChange={(e) => setCellnum(e.target.value)} mask="9999-9999999" placeholder="Cell Number" />
+                                    </div>
+                                    <div className="p-inputgroup flex-1">
+                                        <div className="flex align-items-center">
+                                            <RadioButton inputId="gender1" name="Male" value="Male" onChange={(e) => setGender(e.target.value)} checked={gender === 'Male'} />
+                                            <label htmlFor="Male" className="ml-2">Male</label>
+                                        </div>
+                                        <div className=" ms-5 flex align-items-center">
+                                            <RadioButton inputId="gender2" name="gender" value="Female" onChange={(e) => setGender(e.target.value)} checked={gender === 'Female'} />
+                                            <label htmlFor="gender2" className="ml-2">Female</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <h5 className='mt-2 ms-1' >Available Slots</h5>
                             <ListBox value={selectedCity} onChange={(e) => setSelectedCity(e.value)} options={groupedCities}
                                 optionLabel="label" optionGroupLabel="label" optionGroupChildren="items" className="w-full md:w-14rem mt-2"
                                 listStyle={{ maxHeight: '250px' }} />
@@ -180,7 +225,7 @@ export default function DoctorProfile() {
                             <MDBBtn color='secondary' onClick={toggleShow}>
                                 Close
                             </MDBBtn>
-                            <MDBBtn onClick={() => { myfunc() }} >Book</MDBBtn>
+                            <MDBBtn onClick={(e) => { JoinPatient() }} >Book</MDBBtn>
                         </MDBModalFooter>
                     </MDBModalContent>
                 </MDBModalDialog>

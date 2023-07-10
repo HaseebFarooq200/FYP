@@ -40,8 +40,8 @@ export default function DoctorsList() {
         //  eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const func = async (spec) => {
-        navigate('/specdocs', { state: { spec } })
+    const func = async (spec, city) => {
+        navigate('/specdocs', { state: { spec,city } })
     }
     return (
         <>
@@ -54,28 +54,23 @@ export default function DoctorsList() {
                 </form>
             </MDBContainer>
 
-            <MDBContainer className="d-flex flex-column justify-content-center align-items-center mt-5" breakpoint="md" style={{ backgroundColor: 'whitesmoke' }} >
+            <MDBContainer className="d-flex flex-column mt-5" breakpoint="md" style={{ backgroundColor: 'whitesmoke' }} >
                 <h5 className='mt-3 d-flex align-self-start '>
                     Doctors in Islamabad
                 </h5>
-                <MDBRow className='mt-2 mb-3 ms-1 me-1'>
+                <MDBRow className='mt-2'>
                     {
                         doc.map((index) => {
                             console.log(index.city)
                             if (index.city === "Islamabad") {
                                 return (
-                                    <MDBCol size='md-4' className='d-flex justify-content-center align-items-center shadow-5 mt-2 '  >
-                                        <MDBRow>
-                                            <MDBCol size='4' className='d-flex justify-content-center' >
-                                                <img className="rounded-circle w-75 " alt="avatar1" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLU33ivuTjH03yI1FX2XvfUXKHZORux_GyWw&usqp=CAU" />
-                                            </MDBCol>
-                                            <MDBCol size='8' className='d-flex flex-column justify-content-center align-items-start' >
-                                                <h6 style={{ cursor: 'pointer' }} onClick={() => { func(index.specialization) }} >
-                                                    {index.specialization}
-                                                </h6>
-                                            </MDBCol>
-                                        </MDBRow>
+
+                                    <MDBCol className="border border-1 p-3" size='md-3' >
+                                        <h6 style={{ cursor: 'pointer' }} onClick={() => { func(index.specialization,index.city) }} >
+                                            {index.specialization}
+                                        </h6>
                                     </MDBCol>
+
                                 )
                             }
                             return null;
@@ -84,27 +79,20 @@ export default function DoctorsList() {
                 </MDBRow>
             </MDBContainer>
 
-            <MDBContainer className="mb-3 d-flex flex-column justify-content-center align-items-center mt-3" breakpoint="md" style={{ backgroundColor: 'whitesmoke' }} >
+            <MDBContainer className="mb-3 d-flex flex-column  mt-3" breakpoint="md" style={{ backgroundColor: 'whitesmoke' }} >
                 <h5 className='mt-3 d-flex align-self-start '>
                     Doctors in Lahore
                 </h5>
-                <MDBRow className='mt-2 mb-3 ms-1 me-1'>
+                <MDBRow className='mt-2'>
                     {
                         doc.map((index) => {
                             console.log(index.city)
                             if (index.city === "Lahore") {
                                 return (
-                                    <MDBCol size='md-4' className='d-flex justify-content-center align-items-center shadow-5 mt-2 '  >
-                                        <MDBRow>
-                                            <MDBCol size='4' className='d-flex justify-content-center' >
-                                                <img className="rounded-circle w-75 " alt="avatar1" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLU33ivuTjH03yI1FX2XvfUXKHZORux_GyWw&usqp=CAU" />
-                                            </MDBCol>
-                                            <MDBCol size='8' className='d-flex flex-column justify-content-center align-items-start' >
-                                                <h6 style={{ cursor: 'pointer' }} onClick={() => { func(index.specialization) }} >
-                                                    {index.specialization}
-                                                </h6>
-                                            </MDBCol>
-                                        </MDBRow>
+                                    <MDBCol className="border border-1 p-3" size='md-3' >
+                                        <h6 style={{ cursor: 'pointer' }} onClick={() => { func(index.specialization) }} >
+                                            {index.specialization}
+                                        </h6>
                                     </MDBCol>
                                 )
                             }

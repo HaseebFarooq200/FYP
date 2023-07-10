@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import Card from 'react-bootstrap/Card'
 import {
@@ -26,6 +27,7 @@ export default function Home() {
   const [disease, setDisease] = useState('')
   const [toggleOneModal, setToggleOneModal] = useState(false);
   const [toggleTwoModal, setToggleTwoModal] = useState(false);
+  const navigate = useNavigate()
   const [formValue, setFormValue] = useState({
     s1: '', s2: '', s3: '', s4: '', s5: '', s6: '', s7: '', s8: '', s9: '', s10: '', s11: '', s12: '', s13: '', s14: '', s15: '', s16: '', s17: ''
   });
@@ -116,7 +118,7 @@ export default function Home() {
                 <MDBCardText>
                   Find your disease by entering symptoms by a trained model with 99% accuracy
                 </MDBCardText>
-                <MDBBtn className='mt-5' onClick={() => setToggleOneModal(!toggleOneModal)} >
+                <MDBBtn className='mt-5' onClick={()=>{ navigate('/disease') }} >
                   Find Disease
                   <MDBIcon className='ms-1' fas icon="arrow-right" />
                 </MDBBtn>

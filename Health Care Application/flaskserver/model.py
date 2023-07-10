@@ -1,15 +1,13 @@
 from flask_login import UserMixin
 
-
 class User(UserMixin):
     def __init__(self, db):
         self.doctors = db.doctors
         self.patients = db.patients
 
-    def create_doctor(self, firstname,lastname, email, age, gender, phonenumber, pmc_Number, hospital, specialization,address,city):
+    def create_doctor(self, fullName, email, age, gender, phonenumber, pmc_Number, hospital, specialization,address,city,timing,consultFee):
         user = {
-            "firstname": firstname,
-            "lastname": lastname,
+            "fullName":fullName,
             "email": email,
             "age": age,
             "gender": gender,
@@ -18,19 +16,24 @@ class User(UserMixin):
             'hospital': hospital,
             'specialization': specialization,
             'address': address,
-            'city':city
+            'city':city,
+            'timing':timing,
+            'consultFee':consultFee,
+            'active_appointments':0,
+            'cancelled_appointments':0,
+            'pending_appointments':0,
+            'completed_appointments':0,
         }
         self.doctors.insert_one(user)
         return user
 
 
-    def create_patient(self, username, email, age, gender, phonenumber):
+    def create_patient(self, fullName, email, cellnum, gender):
         user = {
-            "username": username,
+            "fullName": fullName,
             "email": email,
-            "age": age,
-            "gender": gender,
-            "phonenumber": phonenumber
+            "cellnum":cellnum,
+            "gender":gender
         }
         self.patients.insert_one(user)
         return user
@@ -52,6 +55,17 @@ class User(UserMixin):
     
     def get_doctor(self):
         getdoc = self.doctors.find()
+        return getdoc
+    
+    def get_doctorrandom(self):
+        pipeline = [{ "$sample": { "size": 1 } }]
+        getdoc = self.doctors.aggregate(pipeline)
+        return getdoc
+    
+    def get_doctorbyid(self,id):
+        print(id)
+        getdoc = self.doctors.find_one({'_id':id})
+        print(getdoc)
         return getdoc
     
     def get_patient(self):

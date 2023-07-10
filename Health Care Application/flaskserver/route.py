@@ -11,11 +11,17 @@ import pickle
 from model import User
 from model import Appointment
 from model import HealthBlogs
+from bson import ObjectId
 
 client = MongoClient("mongodb+srv://haseeb:health123@cluster0.kzcener.mongodb.net/?retryWrites=true&w=majority")
 
+try:
+    client.admin.command('ping')
+    print("You successfully connected to MongoDB!")
+except Exception as e:
+    print(e)
+
 db = client['HealthCare']
-print("Connection Successfully Established")
 
 userSchema = User(db)
 appointment = Appointment(db)
@@ -52,24 +58,18 @@ def Join_Patient():
     if (request.method == 'POST'):
         user_data = request.get_json()
         user_dict = {
-            'userName': user_data['userName'],
+            'fullName': user_data['fullName'],
             'email': user_data['email'],
-            'age': user_data['age'],
-            'gender': user_data['gender'],
-            'phoneNumber': user_data['phoneNumber']
+            'cellnum': user_data['cellnum'],
+            'gender': user_data['gender']
         }
 
-        if (not user_dict['userName'] or not user_dict['age'] or not user_dict['email'] or not user_dict['gender'] or not user_dict['phoneNumber']):
+        if (not user_dict['fullName'] or not user_dict['cellnum'] or not user_dict['email'] or not user_dict['gender'] ):
             print("Fill all credentials")
             return jsonify("Fill all credentials"), 400
-        else:
-            UserExist = userSchema.find_patient(user_dict['email'])
-            if (UserExist):
-                print("Email Already Exist")
-                return jsonify("Email Already Exist"), 400
-            else:
+        else:          
                 newUser = userSchema.create_patient(
-                    user_dict['userName'], user_dict['email'], user_dict['age'], user_dict['gender'], user_dict['phoneNumber']
+                    user_dict['fullName'], user_dict['email'], user_dict['cellnum'], user_dict['gender']
                 )
                 print("Patient Registered Successfully", newUser)
                 return jsonify("Patient Registered Successfully"), 200
@@ -79,21 +79,23 @@ def Join_Doctor():
     if (request.method == 'POST'):
         user_data = request.get_json()
         user_dict = {
-            'firstName': user_data['firstName'],
-            'lastName': user_data['lastName'],
+            'fullName':user_data['fullName'],
             'email': user_data['email'],
-            'age': user_data['age'],
-            'phoneNumber': user_data['phoneNumber'],
+            'D.O.B':user_data['date'],
+            'gender':user_data['gender'],
+            'phoneNumber': user_data['cellnum'],
             'city': user_data['city'],
             'address': user_data['address'],
             'hospital': user_data['hospital'],
             'pmc_Number': user_data['pmc_Number'],
             'specialization': user_data['specialization'],
-            'gender': user_data['gender']
+            'consultFee':user_data['consultFee'],
+            'timing':user_data['timing']
         }
 
-        if (not user_dict['firstName'] or not user_dict['age'] or not user_dict['email'] or not user_dict['gender'] or not user_dict['phoneNumber'] or
-           not user_dict['pmc_Number'] or not user_dict['hospital'] or not user_dict['specialization'] or not user_dict['address']):
+        if (not user_dict['fullName'] or not user_dict['D.O.B'] or not user_dict['email'] or not user_dict['gender'] or not user_dict['phoneNumber'] or
+           not user_dict['pmc_Number'] or not user_dict['hospital'] or not user_dict['specialization'] or not user_dict['address'] 
+           or not user_dict['city'] or not user_dict['timing'] or not user_dict['consultFee']):
             print("Fill all credentials")
             return jsonify("Fill all credentials"), 400
         else:
@@ -103,8 +105,9 @@ def Join_Doctor():
                 return jsonify("Email Already Exist"), 400
             else:
                 newUser = userSchema.create_doctor(
-                    user_dict['firstName'], user_dict['lastName'] ,user_dict['email'], user_dict['age'], user_dict['gender'], user_dict['phoneNumber'],
-                    user_dict['pmc_Number'], user_dict['hospital'], user_dict['specialization'], user_dict['address'], user_dict['city']
+                    user_dict['fullName'] ,user_dict['email'], user_dict['D.O.B'], user_dict['gender'], user_dict['phoneNumber'],
+                    user_dict['pmc_Number'], user_dict['hospital'], user_dict['specialization'], user_dict['address'], user_dict['city'],
+                    user_dict['timing'], user_dict['consultFee']
                 )
                 print("Doctor Registered Successfully", newUser)
                 return jsonify("Doctor Registered Successfully"), 200
@@ -144,6 +147,7 @@ def verifyOTP():
     print("Entered OTP",type(intnum))
 
     if (otp == intnum):
+        print("Email",user_dict['email'])
         print("Signed in Successfully OTP valid")
         return jsonify('Signed in Successfully OTP valid '),200
     else:
@@ -225,6 +229,13 @@ def GetDoctorList():
     return (resp), 200
 
 
+@app.route('/getdoctor/<string:id>', methods=['GET'])
+def GetDoctor(id):
+    obj_id = ObjectId(id)
+    getdoc = userSchema.get_doctorbyid(obj_id)
+    resp = dumps(getdoc)
+    return (resp), 200
+
 @app.route('/getpatient', methods=['GET'])
 def GetPatientProfile():
     getpatient = userSchema.get_patient()
@@ -235,88 +246,52 @@ def GetPatientProfile():
 @app.route('/predict', methods=['POST'])
 def Prediction():
     user_data = request.get_json()
-    user_dict = {
-        's1': user_data['s1'],
-        's2': user_data['s2'],
-        's3': user_data['s3'],
-        's4': user_data['s4'],
-        # 's5': user_data['s5'],
-        # 's6': user_data['s6'],
-        # 's7': user_data['s7'],
-        # 's8': user_data['s8'],
-        # 's9': user_data['s9'],
-        # 's10': user_data['s10'],
-        # 's11': user_data['s11'],
-        # 's12': user_data['s12'],
-        # 's13': user_data['s13'],
-        # 's14': user_data['s14'],
-        # 's15': user_data['s15'],
-        # 's16': user_data['s16'],
-        # 's17': user_data['s17'],
-    }
+    if len(user_data)>4:
+        return jsonify('Enter 4 symptoms only'),401
+    user_dict = {}
 
-    if (user_dict['s1'] or  
-        user_dict['s2'] or 
-        user_dict['s3'] or 
-        user_dict['s4'] 
-        # user_dict['s5'] or
-        # user_dict['s6'] or
-        # user_dict['s7'] or
-        # user_dict['s8'] or
-        # user_dict['s9'] or
-        # user_dict['s10'] or
-        # user_dict['s11'] or
-        # user_dict['s12'] or
-        # user_dict['s13'] or
-        # user_dict['s14'] or
-        # user_dict['s15'] or
-        # user_dict['s16'] or
-        # user_dict['s17'] 
-        ):
-        
-        df = pd.read_csv('newseverity.csv')
-        for key in user_dict.keys():
-            if user_dict[key] in df["Symptom"].values:
-                user_dict[key] = df.loc[df["Symptom"] == user_dict[key], "weight"].values[0]
-            elif user_dict[key] not in df["Symptom"].values:user_dict[key] = 0
+    # Ensure the user_data list contains exactly four values
+    user_data += [None] * (4 - len(user_data))
+    user_data = user_data[:4]
 
-        X = np.array([
-            user_dict['s1'], 
-            user_dict['s2'], 
-            user_dict['s3'],
-            user_dict['s4'], 
-            # user_dict['s5'], 
-            # user_dict['s6'], 
-            # user_dict['s7'], 
-            # user_dict['s8'], 
-            # user_dict['s9'], 
-            # user_dict['s10'], 
-            # user_dict['s11'], 
-            # user_dict['s12'], 
-            # user_dict['s13'], 
-            # user_dict['s14'], 
-            # user_dict['s15'], 
-            # user_dict['s16'], 
-            # user_dict['s17'],
-            ]).reshape(1, -1)
-            
-        y_pred = model.predict(X)
-        resp = dumps(y_pred)
-        print(type(resp))
-        print("Disease",y_pred)
-        return (resp), 200
+    # Store the values of the list in the dictionary
+    for i, value in enumerate(user_data):
+        key = f's{i}'  # Generate a key based on the index
+        user_dict[key] = value
+        all_null = all(value is None for value in user_dict.values())
+    if(all_null):
+        print("Enter atleast 1 field")
+        return jsonify('Enter atleast 1 field'), 402
+
+    df = pd.read_csv('newseverity.csv')
+    for key in user_dict.keys():
+        if user_dict[key] in df["Symptom"].values:
+            user_dict[key] = df.loc[df["Symptom"] == user_dict[key], "weight"].values[0]
+        elif user_dict[key] not in df["Symptom"].values:user_dict[key] = 0
+
+    X = np.array(list(user_dict.values())).reshape(1, -1)
+    y_pred = model.predict(X)
+    resp = dumps(y_pred)
+    print("Disease",y_pred)
+    return (resp), 200
  
-    else:
-        print("Kaha p ha ?",user_dict['s1'])
-        return jsonify("Enter at least 1 Symptom"),404
-       
+    # else:
+    #     print("Kaha p ha ?",user_dict['s1'])
+    #     return jsonify("Enter at least 1 Symptom"),404
 
-@app.route('/trysome', methods=['GET'])
-def Getsome():
-    # user_data = request.get_json()
-    user_dict = {
-        'title': "This is my title",
-        'description': "This is description of title"
-    }
-    resp = dumps(user_dict['title'])
+@app.route('/getdoctorrandom', methods=['GET'])
+def GetDoctorRandom():
+    getdoc = userSchema.get_doctorrandom()
+    resp = dumps(getdoc)
+    return (resp), 200 
+
+
+
+@app.route('/getsymptom', methods=['GET'])
+def Getsymptom():
+    df = pd.read_csv('newseverity.csv')
+    symptoms = df['Symptom'].unique()
+    sorted_arr = sorted(symptoms)
+    print(type(sorted_arr))
+    resp = dumps(sorted_arr)
     return resp

@@ -18,6 +18,7 @@ export default function SpecialityDoctors() {
     const [doc, setDoc] = useState([])
     const location = useLocation()
     let spec = location.state.spec
+    let city = location.state.city
 
     const navigate = useNavigate()
 
@@ -45,7 +46,6 @@ export default function SpecialityDoctors() {
     }
 
     const myfunc = (email) => {
-        console.log(email)
         navigate('/docprofile', { state: { email } })
     }
     useEffect(() => {
@@ -69,7 +69,7 @@ export default function SpecialityDoctors() {
                 </h5>
                 {
                     doc.map((index) => {
-                        if (spec === index.specialization) {
+                        if (spec === index.specialization && city===index.city ) {
                             return (
                                 <MDBContainer className='mt-3' style={{ backgroundColor: 'white' }} >
                                     <MDBRow>
@@ -80,6 +80,7 @@ export default function SpecialityDoctors() {
                                             <h6>Name : Dr.{index.firstname} {index.lastname}</h6>
                                             <h6>Speciality : {index.specialization} </h6>
                                             <h6>Email : {index.email} </h6>
+                                            <h6>City: {index.city}</h6>
                                             <h6>Experience : 5 years </h6>
                                         </MDBCol>
                                         <MDBCol size='md' className='d-flex flex-column align-items-end justify-content-center '  >
